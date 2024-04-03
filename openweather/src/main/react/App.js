@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomeDashboard from "./components/HomeDashboard";
 import AppContainer from "./containers/AppContainer";
+import WeatherDashboard from "./containers/WeatherDashboard";
 
 const router = createBrowserRouter([
     {
@@ -11,7 +12,7 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <HomeDashboard />
+                element: <WeatherDashboard />
             },
         ]
     },
