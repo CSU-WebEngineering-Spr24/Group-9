@@ -8,6 +8,7 @@ const WeatherDashboard = () => {
     const [zipCode, setZipCode] = useState('');
     const [temperatureUnit, setTemperatureUnit] = useState('Fahrenheit');
     const [weatherData, setWeatherData] = useState(null);
+    const [forecastData, setForecastData] = useState(null);
 
     useEffect(() => {
         const fetchWeather = async (latitude, longitude) => {
@@ -21,6 +22,11 @@ const WeatherDashboard = () => {
 
                 const weather = response.data;
                 setWeatherData(weather);
+
+                // Fetch forecast data after weather data is fetched
+                const forecastResponse = await axios.get(`/weather/forecast?lat=${latitude}&lon=${longitude}`);
+                const forecast = forecastResponse.data;
+                setForecastData(forecast);
 
             } catch (error) {
                 console.error('Error fetching weather data: ', error);
@@ -48,19 +54,19 @@ const WeatherDashboard = () => {
     const handleLocationTypeChange = (event) => {
         setLocationType(event.target.value);
         setWeatherData(null);
-        // setForecastData(null);
+        setForecastData(null);
     };
 
     const handleCityChange = (event) => {
         setSelectedCity(event.target.value);
         setWeatherData(null);
-        // setForecastData(null);
+        setForecastData(null);
     };
 
     const handleZipCodeChange = (event) => {
         setZipCode(event.target.value);
         setWeatherData(null);
-        // setForecastData(null);
+        setForecastData(null);
     };
 
     const handleTemperatureUnitChange = (event) => {
@@ -104,6 +110,10 @@ const WeatherDashboard = () => {
             const weather = response.data;
             setWeatherData(weather);
 
+            const forecastResponse = await axios.get(`/weather/forecast?lat=${weather.coord.lat}&lon=${weather.coord.lon}`);
+            const forecast = forecastResponse.data;
+            setForecastData(forecast);
+
         } catch (error) {
             console.error('Error fetching weather data: ', error);
         }
@@ -114,6 +124,10 @@ const WeatherDashboard = () => {
             const response = await axios.get(`/weather/current?zip=${zipCode}`);
             const weather = response.data;
             setWeatherData(weather);
+
+            const forecastResponse = await axios.get(`/weather/forecast?lat=${weather.coord.lat}&lon=${weather.coord.lon}`);
+            const forecast = forecastResponse.data;
+            setForecastData(forecast);
 
         } catch (error) {
             console.error('Error fetching weather data: ', error);
@@ -178,67 +192,29 @@ const WeatherDashboard = () => {
                 <p className="text-center fst-italic">{locationType === 'city' ? 'Select a city and click Search' : 'Enter a ZIP code and click Search'}</p>
             )}
 
-            {/* {forecastData && ( */}
-            <div>
-                <h2 className="weather-title">3 Hour / 5 Day Forecast</h2>
-                <div className="forecast-container d-flex flex-wrap justify-content-evenly">
-                    {/* {forecastData.list.map((forecast, index) => ( */}
-                    <div key={1} className="forecast-item">
-                        <div className="weather-info d-flex flex-wrap justify-content-center">
-                            <img src="https://openweathermap.org/img/wn/04n@2x.png" alt="Weather Icon" />
-                            <div className='text-center'>
-                                <p>2024-04-03 03:00:00</p>
-                                <p className="temperature">6°</p>
+            {forecastData && (
+                <div>
+                    <h2 className="weather-title">3 Hour / 5 Day Forecast</h2>
+                    <div className="forecast-container d-flex flex-wrap justify-content-around">
+                        {forecastData.list.map((forecast, index) => (
+                            <div key={index} className="forecast-item">
+                                <div className="weather-info d-flex flex-wrap justify-content-center">
+                                    <img src={getWeatherIconUrl(forecast.weather[0].icon)} alt="Weather Icon" />
+                                    <div className='text-center'>
+                                        <p>{forecast.dt_txt}</p>
+                                        <p className="temperature">{renderTemperature(forecast.main.temp)}</p>
+                                    </div>
+                                </div>
+                                <div className="weather-details">
+                                    <p className='text-capitalize'>Condition: {forecast.weather[0].description}</p>
+                                    <p>Wind Speed: {forecast.wind.speed} m/s</p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="weather-details">
-                            <p>Condition: overcast clouds</p>
-                            <p>Wind Speed: 3.75 m/s</p>
-                        </div>
+
+                        ))}
                     </div>
-                    <div key={2} className="forecast-item">
-                        <div className="weather-info d-flex flex-wrap justify-content-center">
-                            <img src="https://openweathermap.org/img/wn/04n@2x.png" alt="Weather Icon" />
-                            <div className='text-center'>
-                                <p>2024-04-03 06:00:00</p>
-                                <p className="temperature">5°</p>
-                            </div>
-                        </div>
-                        <div className="weather-details">
-                            <p>Condition: overcast clouds</p>
-                            <p>Wind Speed: 2.79 m/s</p>
-                        </div>
-                    </div>
-                    <div key={3} className="forecast-item">
-                        <div className="weather-info d-flex flex-wrap justify-content-center">
-                            <img src="https://openweathermap.org/img/wn/04n@2x.png" alt="Weather Icon" />
-                            <div className='text-center'>
-                                <p>2024-04-03 09:00:00</p>
-                                <p className="temperature">3°</p>
-                            </div>
-                        </div>
-                        <div className="weather-details">
-                            <p>Condition: overcast clouds</p>
-                            <p>Wind Speed: 3.79 m/s</p>
-                        </div>
-                    </div>
-                    <div key={4} className="forecast-item">
-                        <div className="weather-info d-flex flex-wrap justify-content-center">
-                            <img src="https://openweathermap.org/img/wn/04n@2x.png" alt="Weather Icon" />
-                            <div className='text-center'>
-                                <p>2024-04-03 12:00:00</p>
-                                <p className="temperature">4°</p>
-                            </div>
-                        </div>
-                        <div className="weather-details">
-                            <p>Condition: overcast clouds</p>
-                            <p>Wind Speed: 4.79 m/s</p>
-                        </div>
-                    </div>
-                    {/* ))} */}
                 </div>
-            </div>
-            {/* )} */}
+            )}
 
         </div>
     )
