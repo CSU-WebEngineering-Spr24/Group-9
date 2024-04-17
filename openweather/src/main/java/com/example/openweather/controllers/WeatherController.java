@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.openweather.domain.CurrentWeather;
+
 @RestController
 @RequestMapping("/weather")
 public class WeatherController {
@@ -13,7 +15,7 @@ public class WeatherController {
     private static final String API_KEY = "f5de623a22205640e2080954fa168020";
 
     @GetMapping("/current")
-    public String getCurrentWeather(
+    public CurrentWeather getCurrentWeather(
             @RequestParam(name = "city", required = false) String city,
             @RequestParam(name = "zip", required = false) String zip,
             @RequestParam(name = "lat", required = false) String lat,
@@ -33,7 +35,7 @@ public class WeatherController {
             apiUrl.append("&lat=").append(lat).append("&lon=").append(lon);
         }
 
-        String response = restTemplate.getForObject(apiUrl.toString(), String.class);
+        CurrentWeather response = restTemplate.getForObject(apiUrl.toString(), CurrentWeather.class);
 
         // Log the response
         System.out.println("OpenWeatherMap Current Weather API Response: " + response);
