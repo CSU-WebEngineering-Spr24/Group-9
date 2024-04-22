@@ -97,10 +97,14 @@ const WeatherDashboard = () => {
     };
 
     const handleSearch = () => {
-        if (locationType === 'city' && selectedCity) {
-            fetchWeatherByCity();
-        } else if (locationType === 'zip' && zipCode) {
-            fetchWeatherByZipCode();
+        if (locationType === 'city') {
+            selectedCity.trim() == ""
+                ? alert("City name is required")
+                : fetchWeatherByCity();
+        } else if (locationType === 'zip') {
+            zipCode.trim() == ""
+                ? alert("Zip code is required")
+                : fetchWeatherByZipCode();
         }
     };
 
