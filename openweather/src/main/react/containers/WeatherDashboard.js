@@ -9,6 +9,7 @@ const WeatherDashboard = () => {
     const [temperatureUnit, setTemperatureUnit] = useState('Fahrenheit');
     const [weatherData, setWeatherData] = useState(null);
     const [forecastData, setForecastData] = useState(null);
+    const [responseErr, setResponseErr] = useState(null)
 
     useEffect(() => {
         const fetchWeather = async (latitude, longitude) => {
@@ -30,6 +31,7 @@ const WeatherDashboard = () => {
 
             } catch (error) {
                 console.error('Error fetching weather data: ', error);
+                setResponseErr("Error occurred, please check input data and try again.")
             }
         };
 
@@ -41,14 +43,16 @@ const WeatherDashboard = () => {
                     fetchWeather(latitude, longitude);
                 }, (error) => {
                     console.error('Error getting user location: ', error);
+                    setResponseErr(`Display weather info for current browser location failed: ${error.message}`);
                 });
             } else {
                 console.error('Geolocation is not supported by this browser.');
+                setResponseErr('Geolocation is not supported by this browser.');
             }
         };
 
         getLocation();
-    }, [locationType, zipCode]);
+    }, []);
 
 
     const handleLocationTypeChange = (event) => {
@@ -97,6 +101,7 @@ const WeatherDashboard = () => {
     };
 
     const handleSearch = () => {
+        setResponseErr(null);
         if (locationType === 'city') {
             selectedCity.trim() == ""
                 ? alert("City name is required")
@@ -120,6 +125,7 @@ const WeatherDashboard = () => {
 
         } catch (error) {
             console.error('Error fetching weather data: ', error);
+            setResponseErr('Error occurred, please check input data and try again.');
         }
     };
 
@@ -135,6 +141,7 @@ const WeatherDashboard = () => {
 
         } catch (error) {
             console.error('Error fetching weather data: ', error);
+            setResponseErr('Error occurred, please check input data and try again.');
         }
     };
 
@@ -193,8 +200,13 @@ const WeatherDashboard = () => {
                     </div>
                 </div>
             ) : (
-                <p className="text-center fst-italic">{locationType === 'city' ? 'Select a city and click Search' : 'Enter a ZIP code and click Search'}</p>
+                <p className="text-center fst-italic">{locationType === 'city' ? 'Enter a city name and click Search' : 'Enter a ZIP code and click Search'}</p>
             )}
+
+            {
+                responseErr &&
+                <p className='text-center text-danger m-3'>{responseErr}</p>
+            }
 
             {forecastData && (
                 <div>
