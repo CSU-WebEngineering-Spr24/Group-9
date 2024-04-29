@@ -224,6 +224,8 @@ const WeatherDashboard = () => {
                                 <div className="weather-details">
                                     <p className='text-capitalize'>Condition: {forecast.weather[0].description}</p>
                                     <p>Wind Speed: {forecast.wind.speed} m/s</p>
+                                    <p>Wind Direction: {forecast.wind.deg}°</p>
+                                    <p>Cloudiness: {forecast.clouds.all}%</p>
                                 </div>
                             </div>
 
